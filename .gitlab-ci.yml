@@ -30,7 +30,7 @@ build:
     # Build
     - >
       /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile 
-      --destination "$CI_REGISTRY_REPO:test"
+      --destination "$CI_REGISTRY_REPO:latest"
 
 test:version:
   stage: test
@@ -40,7 +40,7 @@ test:version:
   tags:
     - shared
   image:
-    name: "$CI_REGISTRY_REPO:test"
+    name: "$CI_REGISTRY_REPO:latest"
   script:
     - |-
       if ! qmake --version; then
