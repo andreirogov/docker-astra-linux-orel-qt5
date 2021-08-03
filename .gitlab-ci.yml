@@ -1,0 +1,49 @@
+workflow:
+  rules:
+    # run branch pipeline
+    - if: '$CI_COMMIT_BRANCH'
+
+stages:
+  - build
+  - test
+
+variables:
+  # CI Registry Repository
+  CI_REGISTRY_REPO: "docker.io/arogov/astra-linux-orel-qt5"
+  # Shell print color codes
+  OK_COL_CODE: '\e[0m'
+  ERR_COL_CODE: '\e[31m'
+
+build:
+  stage: build
+  rules:
+    # run branch pipeline
+    - if: '$CI_COMMIT_BRANCH'
+  tags:
+    - shared
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    # Build
+    - >
+      /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile 
+      --destination "$CI_REGISTRY_REPO:test"
+
+test:version:
+  stage: test
+  rules:
+    # run branch pipeline
+    - if: '$CI_COMMIT_BRANCH'
+  tags:
+    - shared
+  image:
+    name: "$CI_REGISTRY_REPO:test"
+  script:
+    - |-
+      if ! qmake --version; then
+        echo -e "${ERR_COL_CODE}Error running qmake${OK_COL_CODE}"
+        exit 1
+      fi
