@@ -2,7 +2,8 @@ FROM arogov/astra-linux-orel:latest
 
 # Install build-essential and Qt 5
 RUN apt-get update && \
-  apt-get -y --no-install-recommends install build-essential \
+  apt-get -y --no-install-recommends install \
+    build-essential \
     qt5-default \
     qtdeclarative5-dev \
     qml-module-qtquick-controls \
